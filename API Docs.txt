@@ -1,0 +1,380 @@
+
+//////////////////////////////////////////////////////////////// Authorization API \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+http://localhost:8080/auth/userInfo => For Get User Info 
+
+method => GET
+headers => Authorization
+status => 200
+response => user
+
+http://localhost:8080/auth/login   => For User Login 
+
+body => { email, password } 
+method => POST
+response => { token, user } 
+status => 200
+
+http://localhost:8080/auth/register?type=(comapny or personal) =>   For Register New User
+
+method => POST
+type = personal => body => { firstName, lastName, email, password, confirmPassword, phone, address }
+type = company => body => { firstName, lastName, email, password, confirmPassword, companyName, industry, phone, governorate, postalcode }
+status => 201
+
+http://localhost:8080/auth/forget  For Send OTP To User When User Forget Password
+ 
+method => POST
+body => { email }
+status => 200
+
+http://localhost:8080/auth/verifyotp  => For Verify OTP To User
+
+method => POST
+body => { email , otp}
+response => userId
+status => 200
+
+http://localhost:8080/auth/updatepassword  For Update Password To User :
+
+method => Patch
+body => {userId , password,confirmPassword}
+status => 200
+
+
+http://localhost:8080/auth/changepassword For changePassword To Authorize User :
+
+method => Patch
+body => { oldPassword, newPassword, newConfirmPassword }
+status => 200
+
+//////////////////////////////////////////////////////////////// Client Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+http://localhost:8080/client/order For Client Make Order :
+
+method => POST
+body => {senderName, senderPhone, senderEmail,senderPostalCode, senderAddress, receivedName, receivedPhone, receivedEmail, receivedPostalCode, receivedAddress, category, weight, dimension, services, notes, paymentId, deliverTime}
+headers => Authorization
+response => order
+status => 201
+
+http://localhost:8080/client/orders For Get All Orders Blong To User
+
+method => GET
+headers => Authorization
+response => orders
+status => 200
+
+http://localhost:8080/client/order/:orderId For Get Order By ID :
+
+method => GET
+headers => Authorization
+params => orderId
+response => order
+status => 200
+
+http://localhost:8080/client/order/track/:trackId For Get Order By Track Id:
+
+method => GET
+headers => Authorization
+params => trackId
+response => order
+status => 200
+
+http://localhost:8080/client/order/:orderId  For Update Order :
+
+method => Patch
+headers => Authorization
+body => {"senderPostalCode","senderAddress","receivedName","receivedPhone","receivedEmail","receivedPostalCode","receivedAddress","category","weight","dimension","services","notes","paymentId"}
+params => orderId
+response => order
+status => 201
+
+http://localhost:8080/client/order/:orderId For Delete Order:
+
+method => Delete
+headers => Authorization
+params => orderId
+status => 200
+
+http://localhost:8080/client/get_rate For Get Rate:
+
+method => post
+headers => Authorization
+body=>{ Dcountry, Rcountry, weight, Npackge }
+status => 200
+json => {From , To , Regular , Express}
+
+
+http://localhost:8080/client/make_review/:orderId For Make Review:
+
+method => post
+headers => Authorization
+params => orderId
+body=>{ delegateId, review }
+status => 201
+
+http://localhost:8080/client/paymop/auth For Get Paymop Auth => first step:
+
+method => GET
+headers => Authorization
+body => price
+response => {token , paymentId}
+status => 200
+
+http://localhost:8080/client/paymop/payment_key For Payment Key => second step:
+
+method => POST
+headers => Authorization
+body => {token , paymentId,order}
+response => Link
+status => 200
+
+
+
+//////////////////////////////////////////////////////////////// Supervisor \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+1- http://localhost:8080/supervisor/add_delegate  => For Add Delegate
+
+header => Authorization
+body => {firstName , lastName , email , phone}
+img => userImg
+method => POST
+status => 201
+response => Password
+
+
+2- http://localhost:8080/supervisor/remove_delegate/:delegateId => For Delelte Delegate 
+
+header => Authorization
+method => Delete
+status => 200
+
+
+3- http://localhost:8080/supervisor/delegates =>  For Get All Delegates 
+
+header => Authorization
+method => Get
+status => 200
+response => delegates
+
+
+4- http://localhost:8080/supervisor/all_orders =>  For Get All Orders 
+
+header => Authorization
+method => Get
+status => 200
+response => orders
+
+
+5- http://localhost:8080/supervisor/orders => For Get All Orders That Belong  To This SuperVisor
+
+header => Authorization
+method => Get
+status => 200
+response => orders
+
+========
+
+6- http://localhost:8080/supervisor/reviews => For Get All Reviews From Users   -- problem
+
+header => Authorization
+method => Get
+status => 200
+response => Reviews
+
+
+-- problem
+
+7- http://localhost:8080/supervisor/delegate_location/:delegateId => For Get Current Delegate Location  
+
+header => Authorization
+params => delegateId
+method => Get
+status => 200
+response => Delegate Location
+
+8- http://localhost:8080/supervisor/proofs => For Get All Orders Proofs
+
+header => Authorization
+method => Get
+status => 200
+response => Proofs
+
+9- http://localhost:8080/supervisor/proofs/:proofId => For Get OrderProof -- no need for it
+
+
+header => Authorization
+method => Get
+params => proofId
+status => 200
+response => Proof
+
+
+10 - http://localhost:8080/supervisor/proofs/:proofId => For Delete Order Proof 
+
+header => Authorization
+method => Delete
+params => proofId
+status => 200
+
+/////////////////////////////////////////////////////////// Delegate \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+1- http://localhost:8080/delegate/orders  For Get All Avaliable Orders To Delegate
+
+
+header => Authorization
+method => Get
+response => Orders
+
+
+2- http://localhost:8080/delegate/orders/:orderId => For Get Order
+
+header => Authorization
+method => Get
+params => orderId
+response => Orders
+
+3- http://localhost:8080/delegate/take_order/:orderId => For Take Order
+
+header => Authorization
+method => Post
+params => orderId
+status => 200
+
+4- http://localhost:8080/delegate/delegate_orders For Get All Orders Belong To Delegate
+
+header => Authorization
+method => Get
+status => 200
+
+5- http://localhost:8080/delegate/confirm_order/:orderId?type=(Deliverd Or Rejected) => For Send Order Confirmation Such As Delivery Done Or Rejected
+
+header => Authorization
+method => Patch
+status => 200
+params => orderId
+query => type
+
+6 - http://localhost:8080/delegate/proof/:orderId => For Send Order Proof
+
+header => Authorization
+method => Post
+status => 200
+img => proof
+parmas => orderId
+
+7- updateLocation => Socket event To Recive Delegate info 
+
+data => {delegate : delegateId , latitude , longitude }
+  
+
+
+/////////////////////////////////////////// Manager \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+http://localhost:8080/manager/users => For Get All Users
+
+header => Authorization
+method => Get
+status => 200
+response => AllUsers
+
+
+http://localhost:8080/manager/users/:userId => For Delete User
+
+header => Authorization
+method => Delete
+status => 200
+params => userId
+
+http://localhost:8080/manager/supervisor For Add Supervisor
+
+header => Authorization
+method => Post
+body => {firstName , lastName, email ,phone, city }
+img => userImg
+status => 200
+
+
+http://localhost:8080/manager/supervisor/:supervisorId => For Change SuperVisor City
+
+header => Authorization
+method => Patch
+params => supervisorId
+body => {city}
+status => 200
+
+==========================================================================================
+
+http://localhost:8080/manager/orders => For Get All Orders
+
+header => Authorization
+method => Get
+status => 200
+response => Orders
+
+
+http://localhost:8080/manager/orders/:orderId => For Get Order 
+
+header => Authorization
+method => Get
+params => orderId
+status => 200
+response => Order
+
+http://localhost:8080/manager/orders/:orderId => For Delete Order
+
+header => Authorization
+method => Delete
+params => orderId
+status => 200
+
+
+http://localhost:8080/manager/delegate_location/:delegateId For Get Delegate Location
+
+header => Authorization
+method => Get
+params => delegateId
+status => 200
+response => delegate Location
+
+
+http://localhost:8080/manager/proofs For Get All Orders Proof
+
+header => Authorization
+method => Get
+params => orderId
+status => 200
+response => Proofs
+
+http://localhost:8080/manager/proofs/:proofId => For Get Order Proof
+
+header => Authorization
+method => Get
+params => proofId
+status => 200
+response => Proof
+
+
+http://localhost:8080/manager/proofs/:proofId For Delete Order Proof
+
+header => Authorization
+method => Delete
+params => proofId
+status => 200
+
+http://localhost:8080/manager/reviews For Get Reviews 
+
+header => Authorization
+method => Get
+status => 200
+response => Reviews
+
+http://localhost:8080/manager/reviews/:reviewId For Delete Review 
+
+header => Authorization
+method => Delete
+params => reviewId
+status => 200
+
+
